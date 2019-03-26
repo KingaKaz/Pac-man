@@ -1494,6 +1494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  idleSprite: {fileID: 0}
 --- !u!1001 &30651755
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18537,6 +18538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  idleSprite: {fileID: 0}
 --- !u!1001 &646788171
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24590,6 +24592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  idleSprite: {fileID: 0}
 --- !u!1001 &822616982
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32658,6 +32661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  idleSprite: {fileID: 0}
 --- !u!1 &1161844439
 GameObject:
   m_ObjectHideFlags: 0
@@ -51020,6 +51024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  idleSprite: {fileID: 0}
 --- !u!1 &1851971229
 GameObject:
   m_ObjectHideFlags: 0
@@ -51767,6 +51772,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  idleSprite: {fileID: 0}
 --- !u!1 &1879640760
 GameObject:
   m_ObjectHideFlags: 0
@@ -58185,6 +58191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  idleSprite: {fileID: 21300000, guid: 3eee210691ff7f04db49bd21734322eb, type: 3}
 --- !u!114 &2076873163
 MonoBehaviour:
   m_ObjectHideFlags: 0
