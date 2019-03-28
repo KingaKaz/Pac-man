@@ -81,6 +81,15 @@ public class PacMan : MonoBehaviour
 
         if(targetNode !=currentNode && targetNode != null)
         {
+            if (nextDirection ==  direction * -1)
+            {
+                direction *= -1;
+                Node tempNode = targetNode;
+                targetNode = previousNode;
+                previousNode = tempNode;
+            }
+
+
             if (OverShotTarget())
             {
                 currentNode = targetNode;
