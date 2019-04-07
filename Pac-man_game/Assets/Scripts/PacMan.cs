@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PacMan : MonoBehaviour
 {
- 
+
     public float speed = 4.0f;
     public Sprite idleSprite;
 
     private Vector2 direction = Vector2.zero;
     private Vector2 nextDirection;
-    private Node currentNode,previousNode,targetNode;
+    private int pelletConsumed = 0;
+    private Node currentNode, previousNode, targetNode;
     void Start()
     {
         Node node = GetNodeAtPosition(transform.localPosition);
@@ -25,6 +26,7 @@ public class PacMan : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("Score: " + GameObject.Find("Game").GetComponent<GameBoard>().score);
         CheckInput();
 
         Move();
@@ -32,20 +34,24 @@ public class PacMan : MonoBehaviour
         UpdateOrientation();
 
         UpdateAnimationState();
+
+        ConsumePellet();
     }
 
     void CheckInput()
     {
-     
+
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             ChangePosition(Vector2.left);
-        
-        } else if (Input.GetKeyDown(KeyCode.RightArrow))
+
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             ChangePosition(Vector2.right);
 
-        } else if (Input.GetKeyDown(KeyCode.UpArrow))
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             ChangePosition(Vector2.up);
         }
@@ -61,7 +67,7 @@ public class PacMan : MonoBehaviour
     {
         if (d != direction)
             nextDirection = d;
-         
+
         if (currentNode != null)
         {
             Node moveToNode = CanMove(d);
@@ -76,12 +82,12 @@ public class PacMan : MonoBehaviour
         }
     }
 
-    void Move ()
+    void Move()
     {
 
-        if(targetNode !=currentNode && targetNode != null)
+        if (targetNode != currentNode && targetNode != null)
         {
-            if (nextDirection ==  direction * -1)
+            if (nextDirection == direction * -1)
             {
                 direction *= -1;
                 Node tempNode = targetNode;
@@ -95,6 +101,14 @@ public class PacMan : MonoBehaviour
                 currentNode = targetNode;
 
                 transform.localPosition = currentNode.transform.position;
+
+                GameObject otherPortal = GetPortal(currentNode.transform.position);
+
+                if (otherPortal != null)
+                {
+                    transform.localPosition = otherPortal.transform.position;
+                    currentNode = otherPortal.GetComponent<Node>();
+                }
 
                 Node moveToNode = CanMove(nextDirection);
 
@@ -120,16 +134,16 @@ public class PacMan : MonoBehaviour
             else
             {
                 transform.localPosition += (Vector3)(direction * speed) * Time.deltaTime;
-            
+
             }
         }
     }
 
 
-    void MoveToNode(Vector2 d )
+    void MoveToNode(Vector2 d)
     {
         Node moveToNode = CanMove(d);
-        if(moveToNode != null)
+        if (moveToNode != null)
         {
             transform.localPosition = moveToNode.transform.position;
             currentNode = moveToNode;
@@ -142,54 +156,91 @@ public class PacMan : MonoBehaviour
 
         if (direction == Vector2.left)
         {
-            transform.localScale= new Vector3(-1, 1, 1); ;
+            transform.localScale = new Vector3(-1, 1, 1); ;
             transform.localRotation = Quaternion.Euler(0, 0, 0);
-        }else if (direction == Vector2.right)
+        }
+        else if (direction == Vector2.right)
         {
-            transform.localScale= new Vector3 (1,1,1);
+            transform.localScale = new Vector3(1, 1, 1);
             transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
         else if (direction == Vector2.up)
         {
             transform.localScale = new Vector3(1, 1, 1);
             transform.localRotation = Quaternion.Euler(0, 0, 90);
-        }else if (direction == Vector2.down)
+        }
+        else if (direction == Vector2.down)
         {
             transform.localScale = new Vector3(1, 1, 1);
             transform.localRotation = Quaternion.Euler(0, 0, 270);
         }
     }
 
-    void UpdateAnimationState ()
+    void UpdateAnimationState()
     {
         if (direction == Vector2.zero)
         {
             GetComponent<Animator>().enabled = false;
             GetComponent<SpriteRenderer>().sprite = idleSprite;
-        } else
+        }
+        else
         {
             GetComponent<Animator>().enabled = true;
         }
     }
 
-    Node CanMove (Vector2 d)
+
+    void ConsumePellet()
+    {
+        GameObject o = GetTileAtPosition(transform.position);
+        if (o != null)
+        {
+            Tile tile = o.GetComponent<Tile>();
+            if (tile != null)
+            {
+                if (!tile.didConsume && (tile.isPellet || tile.isSuperPellet))
+                {
+                    o.GetComponent<SpriteRenderer>().enabled = false;
+                    tile.didConsume = true;
+                    GameObject.Find("Game").GetComponent<GameBoard>().score += 1;
+                    pelletConsumed++;
+                }
+            }
+        }
+    }
+
+
+
+
+    Node CanMove(Vector2 d)
     {
         Node moveToNode = null;
-        for (int i=0; i<currentNode.neighbors.Length;i++)
+        for (int i = 0; i < currentNode.neighbors.Length; i++)
         {
-            if(currentNode.validDirections[i] == d)
+            if (currentNode.validDirections[i] == d)
             {
                 moveToNode = currentNode.neighbors[i];
                 break;
             }
         }
         return moveToNode;
+
+    }
+
+    GameObject GetTileAtPosition(Vector2 pos)
+    {
+        int tileX = Mathf.RoundToInt (pos.x);
+        int tileY = Mathf.RoundToInt (pos.y);
         
+
+        GameObject tile = GameObject.Find("Game").GetComponent<GameBoard>().board[tileX, tileY];
+        if (tile != null)
+            return tile;
+        return null;
     }
 
 
-
-    Node GetNodeAtPosition (Vector2 pos )
+    Node GetNodeAtPosition(Vector2 pos)
     {
         GameObject tile = GameObject.Find("Game").GetComponent<GameBoard>().board[(int)pos.x, (int)pos.y];
         if (tile != null)
@@ -213,4 +264,24 @@ public class PacMan : MonoBehaviour
         return vec.sqrMagnitude;
     }
 
-}
+    GameObject GetPortal(Vector2 pos)
+    {
+        GameObject tile = GameObject.Find("Game").GetComponent<GameBoard>().board[(int)pos.x, (int)pos.y];
+        
+            if (tile != null)
+            {
+
+                if (tile.GetComponent<Tile>() != null)
+                {
+
+                    if (tile.GetComponent<Tile>().isPortal)
+                    {
+                        GameObject otherPortal = tile.GetComponent<Tile>().portalReceiver;
+                        return otherPortal;
+                    }
+                }
+            }
+        
+            return null;
+        }
+    }

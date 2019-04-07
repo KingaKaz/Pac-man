@@ -6,7 +6,14 @@ public class Tile : MonoBehaviour
 {
     public bool isPortal;
 
-    public GameObject portralReceiver;
+    public bool isPellet;
+    public bool isSuperPellet;
+    public bool didConsume;
+
+
+
+
+    public GameObject portalReceiver;
 
    
 }
