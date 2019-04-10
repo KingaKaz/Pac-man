@@ -26,7 +26,7 @@ public class PacMan : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("Score: " + GameObject.Find("Game").GetComponent<GameBoard>().score);
+       
         CheckInput();
 
         Move();
